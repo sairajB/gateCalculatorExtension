@@ -43,7 +43,9 @@ A comprehensive scientific calculator browser extension designed specifically fo
 
 ### User Interface Features
 
+- **Draggable Interface**: Move calculator anywhere on the page by dragging the header bar
 - **Overlay Design**: Non-intrusive calculator that overlays on any webpage
+- **Multiple Access Methods**: Click toolbar icon or use optional keyboard shortcut (Ctrl+Shift+Y)
 - **Expression Display**: Shows complete mathematical expressions with intermediate steps
 - **Parentheses Support**: Complex expression evaluation with proper operator precedence
 - **Memory Indicator**: Visual indication when values are stored in memory
@@ -55,7 +57,6 @@ A comprehensive scientific calculator browser extension designed specifically fo
 ### Manual Installation (Developer Mode)
 
 1. **Download the Extension Files**:
-
    - Go to the [GitHub repository](https://github.com/sairajB/gateCalculatorExtension)
    - Click the green "Code" button
    - Select "Download ZIP"
@@ -71,17 +72,49 @@ A comprehensive scientific calculator browser extension designed specifically fo
 
 ### Accessing the Calculator
 
-- **Keyboard Shortcut**: Press `Ctrl+Shift+Y` (default)
-- **Browser Action**: Click the calculator icon in the toolbar
-- **Popup Mode**: Right-click the extension icon and select "Open in popup"
+The calculator provides a draggable overlay that injects directly into any webpage:
+
+**Two ways to open:**
+
+- **Click the calculator icon** in the toolbar (instant access)
+- **Keyboard shortcut**: Press `Ctrl+Shift+Y` (optional, requires one-time setup)
+
+**Features:**
+
+- **Draggable**: Click and drag the blue "Scientific Calculator" header bar to reposition anywhere on the page
+- Stays in position while you browse and study
+- Non-intrusive overlay that doesn't block content
+- Works on any webpage
+
+**To close:**
+
+- Click the X button in the calculator, OR
+- Click the toolbar icon again to toggle it off, OR
+- Press `Ctrl+Shift+Y` again (if using keyboard shortcut)
+
+### Setting Up the Keyboard Shortcut (Optional)
+
+For keyboard access, manually assign the shortcut (one-time setup):
+
+1. Open Chrome and go to `chrome://extensions/shortcuts`
+2. Scroll down to find "GATE Calculator"
+3. Click in the empty field next to "Toggle GATE Calculator on page"
+4. Press `Ctrl+Shift+Y` (or your preferred key combination)
+5. The shortcut is now active!
+
+**Note**: Chrome doesn't auto-assign keyboard shortcuts. This is optional but recommended for faster access.
 
 ### Basic Operations
 
-1. Click the calculator icon or use the keyboard shortcut
-2. The calculator overlay will appear on the current webpage
-3. Use mouse clicks to input numbers and operations
-4. Press `=` to calculate results
-5. Press `C` to clear current input or `AC` to clear all
+1. **Open the calculator**: Click the icon in the toolbar (or press `Ctrl+Shift+Y` if set up)
+2. The calculator will appear on the current webpage
+3. **Move the calculator**:
+   - Hover over the blue "Scientific Calculator" header bar
+   - Click and drag to reposition anywhere on the page
+4. Use mouse clicks to input numbers and operations
+5. Press `=` to calculate results
+6. Press `C` to clear current input or `AC` to clear all
+7. **Close the calculator**: Click the X button, click the toolbar icon again, or press `Ctrl+Shift+Y` again
 
 ### Memory Functions
 
@@ -155,12 +188,25 @@ The MIT License is a permissive license that allows for reuse within proprietary
 ### Common Issues
 
 **Calculator not appearing**: Check if the extension is enabled in Chrome extensions page
-**Keyboard shortcut not working**: Verify the shortcut hasn't been overridden by other extensions
+
+**Keyboard shortcut not working**:
+
+- Go to `chrome://extensions/shortcuts` and verify the shortcut is set
+- If it shows "Not set", manually assign `Ctrl+Shift+Y`
+- Check for conflicts with other extensions using the same shortcut
+
+**Cannot drag the calculator**:
+
+- Make sure you're clicking and dragging the blue header bar (with "Scientific Calculator" text)
+- Don't click on the Help, Minimize, or Close buttons
+- Ensure the calculator has fully loaded before attempting to drag
+
 **Calculation errors**: Ensure inputs are within supported ranges and formats
+
 **Memory issues**: Clear memory and restart calculation sequence
 
 ### Browser Compatibility
 
 - **Supported**: Chrome 88+, Edge 88+, Opera 74+
 - **Manifest Version**: V3 (latest Chrome extension standards)
-- **Required Permissions**: Active tab access for overlay functionality
+- **Required Permissions**: Script injection for draggable overlay functionality

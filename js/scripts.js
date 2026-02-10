@@ -66,7 +66,7 @@ $(document).ready(function () {
   $("[class^=keyPad_]").each(function () {
     $(this).click(function () {
       $("#keyPad_UserInput1").setCursorPosition(
-        $("#keyPad_UserInput1").val().length
+        $("#keyPad_UserInput1").val().length,
       );
     });
   });
@@ -631,7 +631,7 @@ $(document).ready(function () {
         break;
       case 3:
         inBox1.val(
-          inBox1.val().substring(0, inBox1.val().length - trigDisplay.length)
+          inBox1.val().substring(0, inBox1.val().length - trigDisplay.length),
         );
         stackVal2 = 4;
         break;
@@ -1175,7 +1175,7 @@ $(document).ready(function () {
           if (newOpCode == 9) {
             if (strInput.indexOf("-") > -1) {
               inBox1.val(
-                inBox1.val().substring(0, inBox1.val().lastIndexOf("+"))
+                inBox1.val().substring(0, inBox1.val().lastIndexOf("+")),
               );
             } else {
               inBox1.val(inBox1.val().replace("e+0", "e+"));
@@ -1285,6 +1285,23 @@ $(document).ready(function () {
       $(".left_sec").show();
       $("#keyPad_UserInput1").show();
       $("#helpContent").hide();
+    });
+
+    // Drag support — notify parent page to start dragging the iframe
+    $(document).on("mousedown", "#helptopDiv", function (e) {
+      // Don't initiate drag when clicking help buttons
+      if ($(e.target).closest("#keyPad_Help, #keyPad_Helpback").length) {
+        return;
+      }
+      e.preventDefault();
+      window.parent.postMessage(
+        {
+          type: "startDrag",
+          offsetX: e.clientX,
+          offsetY: e.clientY,
+        },
+        "*",
+      );
     });
   });
 });
