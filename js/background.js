@@ -1,31 +1,48 @@
 chrome.action.onClicked.addListener((tab) => {
+  if (
+    !tab.url ||
+    tab.url.startsWith("chrome://") ||
+    tab.url.startsWith("edge://") ||
+    tab.url.startsWith("about:")
+  ) {
+    return;
+  }
   const calculatorUrl = chrome.runtime.getURL("index.html");
-  chrome.scripting.executeScript({
-    target: { tabId: tab.id },
-    func: injectCalculator,
-    args: [calculatorUrl],
-  });
+  chrome.scripting
+    .executeScript({
+      target: { tabId: tab.id },
+      func: injectCalculator,
+      args: [calculatorUrl],
+    })
+    .catch(() => {});
 });
 
 chrome.commands.onCommand.addListener((command, tab) => {
   if (command === "toggle_calculator") {
+    if (
+      !tab.url ||
+      tab.url.startsWith("chrome://") ||
+      tab.url.startsWith("edge://") ||
+      tab.url.startsWith("about:")
+    ) {
+      return;
+    }
     const calculatorUrl = chrome.runtime.getURL("index.html");
-    chrome.scripting.executeScript({
-      target: { tabId: tab.id },
-      func: injectCalculator,
-      args: [calculatorUrl],
-    });
+    chrome.scripting
+      .executeScript({
+        target: { tabId: tab.id },
+        func: injectCalculator,
+        args: [calculatorUrl],
+      })
+      .catch(() => {});
   }
 });
 
 function injectCalculator(calculatorUrl) {
   const iframeId = "gate-calculator-iframe";
-  const overlayId = "gate-calculator-drag-overlay";
   const existingIframe = document.getElementById(iframeId);
 
   if (existingIframe) {
-    const existingOverlay = document.getElementById(overlayId);
-    if (existingOverlay) existingOverlay.remove();
     existingIframe.remove();
     return;
   }
@@ -33,13 +50,19 @@ function injectCalculator(calculatorUrl) {
   const iframe = document.createElement("iframe");
   iframe.id = iframeId;
   iframe.src = calculatorUrl;
-  iframe.style.position = "fixed";
-  iframe.style.top = "10px";
-  iframe.style.right = "10px";
-  iframe.style.width = "470px";
-  iframe.style.height = "600px";
-  iframe.style.zIndex = "9999";
-  iframe.style.border = "none";
+  iframe.style.cssText = `
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    width: 470px;
+    height: 320px;
+    z-index: 2147483647;
+    border: none;
+    border-radius: 5px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    overflow: hidden;
+  `;
+  iframe.allow = "clipboard-read; clipboard-write";
   document.body.appendChild(iframe);
 
   // Drag state
@@ -47,33 +70,26 @@ function injectCalculator(calculatorUrl) {
   let dragOffsetX = 0;
   let dragOffsetY = 0;
 
-  // Transparent overlay to capture mouse events over iframe during drag
-  const overlay = document.createElement("div");
-  overlay.id = overlayId;
-  overlay.style.cssText =
-    "position:fixed;top:0;left:0;width:100%;height:100%;z-index:10000;cursor:move;display:none;";
-  document.body.appendChild(overlay);
-
   function onMouseMove(e) {
     if (!isDragging) return;
+    e.preventDefault();
     iframe.style.left = e.clientX - dragOffsetX + "px";
     iframe.style.top = e.clientY - dragOffsetY + "px";
     iframe.style.right = "auto";
   }
 
-  function onMouseUp() {
+  function stopDrag() {
+    if (!isDragging) return;
     isDragging = false;
-    overlay.style.display = "none";
-    document.removeEventListener("mousemove", onMouseMove);
-    document.removeEventListener("mouseup", onMouseUp);
+    iframe.style.pointerEvents = "";
+    document.removeEventListener("mousemove", onMouseMove, true);
+    document.removeEventListener("mouseup", stopDrag, true);
   }
 
   window.addEventListener("message", function (event) {
     if (event.data.type && event.data.type === "closeCalculator") {
       const iframeToRemove = document.getElementById(iframeId);
       if (iframeToRemove) iframeToRemove.remove();
-      const overlayToRemove = document.getElementById(overlayId);
-      if (overlayToRemove) overlayToRemove.remove();
     }
 
     if (event.data.type && event.data.type === "startDrag") {
@@ -83,12 +99,13 @@ function injectCalculator(calculatorUrl) {
       iframe.style.left = rect.left + "px";
       iframe.style.top = rect.top + "px";
       iframe.style.right = "auto";
+      // Disable pointer events on iframe so document captures all mouse events
+      iframe.style.pointerEvents = "none";
 
       dragOffsetX = event.data.offsetX;
       dragOffsetY = event.data.offsetY;
-      overlay.style.display = "block";
-      document.addEventListener("mousemove", onMouseMove);
-      document.addEventListener("mouseup", onMouseUp);
+      document.addEventListener("mousemove", onMouseMove, true);
+      document.addEventListener("mouseup", stopDrag, true);
     }
   });
 }
